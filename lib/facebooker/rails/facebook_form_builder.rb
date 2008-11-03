@@ -40,6 +40,9 @@ module Facebooker
         @template.content_tag "fb:editor-custom",string, :label=>label_for("",options)
       end
       
+      def divider(string="", options = {})
+        @template.content_tag("fb:editor-divider", "")
+      end
       
       def text_field(method, options = {})
         options[:label] ||= label_for(method,options)
@@ -96,6 +99,17 @@ module Facebooker
         end.join
         
         @template.content_tag "fb:editor-buttonset",buttons
+      end
+      
+      # TODO: Allow cancel_url to be a hash that gets passed to url_for()
+      def buttons_with_cancel(cancel_url, name_list)
+        buttons=name_list.map do |name|
+            create_button(name)
+        end.join
+        
+        buttons += @template.content_tag "fb:editor-cancel", "", :value => 'Cancel', :href => cancel_url
+        @template.content_tag "fb:editor-buttonset",buttons
+          
       end
       
       def create_button(name)
