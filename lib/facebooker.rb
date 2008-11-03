@@ -21,6 +21,7 @@ require 'digest/md5'
 
 require 'facebooker/batch_request'
 require 'facebooker/feed'
+require 'facebooker/logging'
 require 'facebooker/model'
 require 'facebooker/parser'
 require 'facebooker/service'
@@ -65,7 +66,7 @@ module Facebooker
         ENV['FACEBOOK_SECRET_KEY'] = facebooker['secret_key']
         ENV['FACEBOOKER_RELATIVE_URL_ROOT'] = facebooker['canvas_page_name']
         ENV['FACEBOOKER_API'] = facebooker['api']
-        if Module.const_defined?("ActionController")
+        if Object.const_defined?("ActionController")
           ActionController::Base.asset_host = facebooker['callback_url'] if(ActionController::Base.asset_host.blank?)
         end
         @facebooker_configuration = facebooker
