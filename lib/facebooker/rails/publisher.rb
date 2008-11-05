@@ -208,7 +208,21 @@ module Facebooker
         def target_ids=(val)
           @target_ids = val.is_a?(Array) ? val.join(",") : val
         end
-        
+
+        # Returns a JSON-encoded version of the published story that is appropriate
+        # for use with a Facebook "feed form". Typically used with the 
+        # create_action() form of the Publisher class.
+        # More at http://wiki.developers.facebook.com/index.php/FeedStory_form
+        def as_feed_story(story_type='feedStory')
+          {'content' => 
+            {'feed' => 
+              {'template_id' => self.template_id,
+               'template_data' => self.data
+              }
+            },
+            'method' => story_type
+          }.to_json
+        end
       end
       
       cattr_accessor :ignore_errors
