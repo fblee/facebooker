@@ -87,6 +87,15 @@ module Facebooker
     #
     # Publisher makes many helpers available, including the linking and asset helpers
     class Publisher
+      def initialize
+        @controller = PublisherController.new        
+      end
+      
+      # use facebook options everywhere
+      def request_comes_from_facebook?
+        true
+      end
+      
       class FacebookTemplate < ::ActiveRecord::Base
         
         
@@ -97,7 +106,7 @@ module Facebooker
           "FacebookTemplate"
         end
         
-        def changed?(hash)
+        def template_changed?(hash)
           if respond_to?(:content_hash)
             content_hash != hash 
           else
@@ -139,7 +148,7 @@ module Facebooker
           
           def find_in_db(klass,method)
             template = find_by_template_name(template_name(klass,method))
-            if template and template.changed?(hashed_content(klass,method))
+            if template and template.template_changed?(hashed_content(klass,method))
               template.destroy
               template = nil
             end
@@ -412,8 +421,6 @@ module Facebooker
       end
       ActionController::Routing::Routes.named_routes.install(self.master_helper_module)
       include self.master_helper_module
-      # Publisher is the controller, it should do the rewriting
-      include ActionController::UrlWriter
       class <<self
         
         def register_all_templates
@@ -484,6 +491,16 @@ module Facebooker
         end
     
       end
+      class PublisherController
+        include Facebooker::Rails::Publisher.master_helper_module
+        include ActionController::UrlWriter
+        
+        def self.default_url_options(*args)
+          Facebooker::Rails::Publisher.default_url_options(*args)
+        end
+        
+      end
+      
     end
   end
 end

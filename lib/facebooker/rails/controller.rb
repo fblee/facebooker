@@ -9,6 +9,7 @@ module Facebooker
         controller.before_filter :set_adapter
         controller.before_filter :set_fbml_format
         controller.helper_attr :facebook_session_parameters
+        controller.helper_method :request_comes_from_facebook?
       end
 
     
@@ -35,6 +36,14 @@ module Facebooker
         @facebook_params ||= verified_facebook_params
       end      
       
+      def redirect_to(*args)
+        if request_is_for_a_facebook_canvas? and !request_is_facebook_tab?
+          render :text => fbml_redirect_tag(*args)
+        else
+          super
+        end
+      end
+            
       private
       
       def session_already_secured?
@@ -147,14 +156,6 @@ module Facebooker
           'expires' => lambda{|value| blank?(value) ? nil : Time.at(value.to_f)},
           'friends' => lambda{|value| value.split(/,/)}
         )
-      end
-      
-      def redirect_to(*args)
-        if request_is_for_a_facebook_canvas? and !request_is_facebook_tab?
-          render :text => fbml_redirect_tag(*args)
-        else
-          super
-        end
       end
       
       def fbml_redirect_tag(url)
