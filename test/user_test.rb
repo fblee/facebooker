@@ -15,6 +15,11 @@ class UserTest < Test::Unit::TestCase
     @user.friends = [@other_user]
   end
   
+  def test_has_permission
+    expect_http_posts_with_responses(has_app_permission_response_xml)
+    assert @user.has_permission?("status_update")
+  end
+  
   def test_can_ask_user_if_he_or_she_is_friends_with_another_user
     assert(@user.friends_with?(@other_user))
   end
@@ -109,9 +114,13 @@ class UserTest < Test::Unit::TestCase
     @user.send_email("subject", nil, "body fbml")
   end
   
+  def test_doesnt_post_to_facebook_when_assigning_status
+    @session.expects(:post).never
+    @user.status="my status"
+  end
   def test_can_set_status_with_string
     @session.expects(:post).with('facebook.users.setStatus', :status=>"my status",:status_includes_verb=>1)
-    @user.status="my status"
+    @user.set_status("my status")
   end
   
   def test_get_events
@@ -224,6 +233,15 @@ class UserTest < Test::Unit::TestCase
     <connect_registerUsers_response xmlns="http://api.facebook.com/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://api.facebook.com/1.0/facebook.xsd" list="true"> 
       <connect_registerUsers_response_elt>4228600737_c96da02bba97aedfd26136e980ae3761</connect_registerUsers_response_elt> 
     </connect_registerUsers_response>
+    XML
+  end
+  
+  def has_app_permission_response_xml
+    <<-XML
+    <?xml version="1.0" encoding="UTF-8"?>
+    <users_hasAppPermission_response xmlns="http://api.facebook.com/1.0/"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://api.facebook.com/1.0/ http://api.facebook.com/1.0/facebook.xsd">1</users_hasAppPermission_response>
     XML
   end
 end
