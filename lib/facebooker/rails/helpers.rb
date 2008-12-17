@@ -8,6 +8,13 @@ module Facebooker
     #
     module Helpers
       
+      # Return the URL of this application's information page. Requires the 
+      # application ID to have been configured in facebooker.yml as app_id
+      def fb_app_info_page
+        unless ENV['FACEBOOK_APPLICATION_ID'].blank?
+          "http://www.facebook.com/apps/application.php?id=#{ENV['FACEBOOK_APPLICATION_ID']}"
+        end
+      end
       
       # Create an fb:dialog
       # id must be a unique name e.g. "my_dialog"
