@@ -109,7 +109,6 @@ module Facebooker
         
         buttons += @template.content_tag "fb:editor-cancel", "", :value => 'Cancel', :href => cancel_url
         @template.content_tag "fb:editor-buttonset",buttons
-          
       end
       
       def create_button(name)
