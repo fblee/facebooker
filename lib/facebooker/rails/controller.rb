@@ -94,7 +94,7 @@ module Facebooker
       
       #override to specify where the user should be sent after logging in
       def after_facebook_login_url
-        nil
+          nil
       end
       
       def create_new_facebook_session_and_redirect!
@@ -217,7 +217,8 @@ module Facebooker
       end
       
       def application_is_not_installed_by_facebook_user
-        redirect_to session[:facebook_session].install_url
+        url_params = after_facebook_login_url.nil? ? {} : {:next=>after_facebook_login_url}
+        redirect_to session[:facebook_session].install_url(url_params)
       end
       
       def set_fbml_format
@@ -244,3 +245,4 @@ module Facebooker
     end
   end
 end
+
