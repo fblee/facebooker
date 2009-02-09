@@ -385,6 +385,9 @@ module Facebooker
         unless flash[:notice].blank?
           message += fb_success(flash[:notice])
         end
+        unless flash[:info].blank?
+          message += flash[:info] # assumes flash[:info] contains its own FBML formatting
+        end
         unless flash[:error].blank?
           message += fb_error(flash[:error])
         end
